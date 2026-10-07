@@ -11,7 +11,7 @@
 }
 \geometry{margin=1in}
 
-\title{Small Models, Big Reactions: Studying Efficient Emoji Prediction}
+\title{Small Models, Big Reactions: Exploring the Performance–Cost Tradeoff in Emoji Prediction}
 \author{Minh Vu, Tri Than, Duy Nguyen}
 \date{\today}
 
@@ -33,35 +33,34 @@ Prior work has shown that both simple classifiers and pretrained language models
 can perform this task, but these approaches vary greatly in predictive performance
 and computational cost. Understanding this tradeoff is useful because a smaller
 model may be preferable when computational resources or inference speed are limited,
-even if it sacrifices some predictive performance. We therefore ask:
-\textbf{What is the tradeoff between model complexity and emoji-prediction performance?}
-Using the TweetEval emoji benchmark, we will compare models of increasing complexity,
-including TF-IDF + logistic regression, a BiLSTM classifier, DistilBERT, and a larger
-Transformer such as BERT-base or RoBERTa-base. We will evaluate macro-F1, parameter
-count, and inference latency, and analyze frequently confused emoji classes. This
-study will help us understand whether the performance gains of larger models justify
-their additional computational cost, and whether those gains are concentrated in
-difficult or semantically similar emoji classes.
+even if it sacrifices some predictive performance. We therefore study two questions:
+
+\textbf{RQ1:} What is the tradeoff between emoji-prediction performance and model
+complexity, measured by macro-F1, parameter count, and inference latency?
+
+\textbf{RQ2:} Are the performance gains of more complex models concentrated in
+difficult or semantically similar emoji classes?
 
 \section{Literature Survey}
 
-Emoji prediction has been studied as a social-media text classification task in prior 
-work. The SemEval-2018 Task 2 benchmark formalized the problem as predicting the most 
-likely emoji associated with a tweet and evaluated systems using macro-F1 because of 
-the imbalance among emoji classes \cite{barbieri2018semeval}. A wide range of approaches 
-were explored in the shared task, including bag-of-words classifiers, support vector 
-machines, convolutional neural networks, recurrent neural networks, and attention-based 
-models. Some relatively simple systems were surprisingly competitive, while more complex 
-neural models attempted to capture semantic and contextual information more effectively.
+SemEval-2018 Task 2 formalized emoji prediction as predicting the most likely
+emoji associated with a tweet and used macro-F1 to account for class imbalance
+\cite{barbieri2018semeval}. Submitted systems ranged from traditional classifiers
+to convolutional and recurrent neural networks, showing that substantially different
+model families can be applied to the same prediction task.
 
-Later, TweetEval incorporated emoji prediction into a standardized benchmark for Twitter
--specific classification tasks and provided fixed training, validation, and test splits 
-together with stronger pretrained language-model baselines \cite{barbieri2020tweeteval}. 
-TweetEval showed that pretrained Transformer models can improve performance, but emoji 
-prediction remains difficult because the label distribution is highly skewed and several 
-emoji classes have similar meanings. These results motivate our study of whether the 
-additional complexity of larger models produces enough improvement to justify their higher 
-computational cost.
+TweetEval later incorporated emoji prediction into a standardized Twitter
+classification benchmark with fixed data splits and pretrained language-model
+baselines \cite{barbieri2020tweeteval}. Its results showed the effectiveness of
+pretrained Transformer representations for social-media classification.
+
+Our model choices span several levels of complexity. TF-IDF with logistic
+regression provides a lightweight baseline, while BiLSTM introduces recurrent
+sequence modeling \cite{hochreiter1997lstm,schuster1997brnn}. BERT provides a
+large pretrained Transformer baseline \cite{devlin2019bert}, while DistilBERT
+was designed as a smaller and faster version of BERT \cite{sanh2019distilbert}.
+These models therefore provide a natural spectrum for studying the
+performance--cost tradeoff.
 
 \section{Data Requirements}
 
@@ -78,30 +77,41 @@ when necessary.
 
 \section{Experiment Plan}
 
-We will compare several models of increasing complexity on the TweetEval emoji prediction task. 
-Our baseline will be TF-IDF features with logistic regression. We will then compare this baseline 
-with a BiLSTM classifier, DistilBERT, and a larger pretrained Transformer such as BERT-base or 
-RoBERTa-base. All models will use the same train, validation, and test splits to ensure a fair 
-comparison.
+We will compare four models of increasing complexity: TF-IDF with logistic
+regression as a lightweight baseline, a BiLSTM classifier, DistilBERT, and
+BERT-base. All models will use the same TweetEval train, validation, and test
+splits. Neural models will be tuned using a small hyperparameter search on the
+validation set, and we will run multiple random seeds to reduce sensitivity to
+initialization.
 
-We will evaluate predictive performance using macro-F1, which is appropriate for the imbalanced 
-emoji classes. To measure computational cost, we will record parameter count and inference latency 
-under the same hardware and batch settings. We will also perform class-level and qualitative error 
-analysis using confusion matrices and representative misclassified examples, focusing on whether 
-larger models better distinguish semantically similar emoji classes.
+Following TweetEval, macro-F1 will be our primary evaluation metric, with
+accuracy reported as a secondary measure. Computational cost will be measured
+using parameter count and inference latency. Latency will be measured on the
+same hardware with a fixed batch size after warm-up runs and averaged across
+repeated measurements. We will also analyze confusion matrices and
+representative errors to determine whether more complex models better
+distinguish semantically similar emoji classes.
 
 \section{Feasibility and Next Steps}
 
-We will run experiments in Google Colab Pro, using an NVIDIA T4 GPU as our expected
-resource and an A100 when available. Our first experiment will establish the TF-IDF +
-logistic regression baseline and verify the TweetEval training and evaluation pipeline.
-By the milestone, we aim to evaluate the baseline, BiLSTM, and at least one pretrained
-Transformer, with preliminary macro-F1, model-size, and inference-latency results. By
-the final report, we will complete the model comparison and qualitative error analysis.
+We will run the experiments primarily in Google Colab Pro. An NVIDIA T4 GPU will be
+our expected training resource, while an A100 may be used when available to reduce
+training time. Our implementation will rely on Python, scikit-learn for the TF-IDF
+baseline, PyTorch for neural models, and Hugging Face Transformers and Datasets for
+pretrained models and data loading.
 
-Potential challenges include GPU availability, class imbalance, noisy social-media text,
-and preprocessing artifacts. If compute becomes limiting, we will reduce the number of
-larger Transformer models while preserving the performance--complexity comparison.
+Our first experiment will establish the TF-IDF + logistic regression baseline and
+verify the complete TweetEval training and evaluation pipeline. By the milestone, we
+plan to evaluate the baseline, BiLSTM, and at least one pretrained Transformer and
+report preliminary macro-F1, parameter-count, and inference-latency results. By the
+final report, we will complete the full comparison across all planned models and perform
+class-level and qualitative error analysis.
+
+The main dependencies are access to the TweetEval data, the required Python libraries,
+and Colab GPU availability. Potential obstacles include class imbalance, noisy
+social-media text, preprocessing artifacts, and variation in GPU availability. If
+compute becomes limiting, we will reduce the number of larger Transformer experiments
+while preserving the core performance--complexity comparison.
 
 \bibliographystyle{plain}
 \bibliography{references}
