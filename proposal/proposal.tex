@@ -1,0 +1,73 @@
+\documentclass[12pt]{extarticle}
+\usepackage[utf8]{inputenc}
+% \usepackage{cite}
+\usepackage{geometry}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    citecolor=blue,
+    linkcolor=black,
+    urlcolor=blue
+}
+\geometry{margin=1in}
+
+\title{Small Models, Big Reactions: Studying Efficient Emoji Prediction}
+\author{Minh Vu, Tri Than, Duy Nguyen}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% \begin{abstract}
+% Provide a brief summary of the proposal, including the core objective, methodology, and expected impact.
+% \end{abstract}
+
+\section{Problem and Motivation}
+
+Emoji are widely used in online communication to express emotion, tone, humor, 
+and reactions that may not be obvious from text alone. We study emoji prediction 
+as a multi-class text classification task: given a short social-media post with 
+its emoji removed, the model predicts one of a fixed set of emoji classes.\\\\
+Prior work has shown that both simple classifiers and pretrained language models
+can perform this task, but these approaches vary greatly in predictive performance
+and computational cost. Understanding this tradeoff is useful because a smaller
+model may be preferable when computational resources or inference speed are limited,
+even if it sacrifices some predictive performance. We therefore ask:
+\textbf{What is the tradeoff between model complexity and emoji-prediction performance?}
+Using the TweetEval emoji benchmark, we will compare models of increasing complexity,
+including TF-IDF + logistic regression, a BiLSTM classifier, DistilBERT, and a larger
+Transformer such as BERT-base or RoBERTa-base. We will evaluate macro-F1, parameter
+count, and inference latency, and analyze frequently confused emoji classes. This
+study will help us understand whether the performance gains of larger models justify
+their additional computational cost, and whether those gains are concentrated in
+difficult or semantically similar emoji classes.
+
+\section{Literature Survey}
+
+Emoji prediction has been studied as a social-media text classification task in prior 
+work. The SemEval-2018 Task 2 benchmark formalized the problem as predicting the most 
+likely emoji associated with a tweet and evaluated systems using macro-F1 because of 
+the imbalance among emoji classes \cite{barbieri2018semeval}. A wide range of approaches 
+were explored in the shared task, including bag-of-words classifiers, support vector 
+machines, convolutional neural networks, recurrent neural networks, and attention-based 
+models. Some relatively simple systems were surprisingly competitive, while more complex 
+neural models attempted to capture semantic and contextual information more effectively. \\\\
+Later, TweetEval incorporated emoji prediction into a standardized benchmark for Twitter
+-specific classification tasks and provided fixed training, validation, and test splits 
+together with stronger pretrained language-model baselines \cite{barbieri2020tweeteval}. 
+TweetEval showed that pretrained Transformer models can improve performance, but emoji 
+prediction remains difficult because the label distribution is highly skewed and several 
+emoji classes have similar meanings. These results motivate our study of whether the 
+additional complexity of larger models produces enough improvement to justify their higher 
+computational cost.
+
+\section{Work Plan and Timeline}
+State the short- and long-term milestones, including estimated timelines for completion of each stage \cite{Linhart2014}.
+
+\section{Expected Deliverables}
+Describe the final outcomes, outputs, or products resulting from this project.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
